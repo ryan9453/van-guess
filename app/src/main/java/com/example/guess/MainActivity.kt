@@ -2,11 +2,13 @@ package com.example.guess
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.example.guess.databinding.ActivityMainBinding
 
 
-class MainActivity : AppCompatActivity() {
+/*class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,4 +70,46 @@ class MainActivity : AppCompatActivity() {
         reset()
         binding.talk.text = "請開始"
     }
+}*/
+
+class MainActivity : AppCompatActivity() {
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
+    }
+    lateinit var binding: ActivityMainBinding
+    val game = NumberGame()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+//        Log.d("MainActivity", "secret = $secret")
+    }
+
+    fun guess(view: View) {
+        Log.d(TAG, "guess:")
+        val num = binding.edNumber.text.toString().toInt()
+        val state = game.guess(num)
+        val message = when(state) {
+            NumberGame.GameState.BIGGER -> getString(R.string.bigger)
+            NumberGame.GameState.SMALLER -> getString(R.string.smaller)
+            NumberGame.GameState.BINGO -> getString(R.string.bingo)
+            else -> getString(R.string.sometine_wrong)
+        }
+        // 用 Alt+Enter 可以快速將字串萃取到 Xml檔
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dialog_title))
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.ok)) { d, w ->
+                if (game.end) game.reset()
+                updateUI()
+            }
+            .show()
+        updateUI()
+    }
+
+    private fun updateUI() {
+        binding.tvCounter.text = game.counter.toString()
+    }
+
 }
+

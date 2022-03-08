@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Guess</string>
+    <string name="smaller">再小一點</string>
+    <string name="dialog_title">猜數字</string>
+    <string name="ok">確定</string>
+    <string name="please_enter_a_number_1_10">請輸入數字 1-10</string>
+    <string name="sometine_wrong">有錯誤狀況</string>
+    <string name="bingo">猜對了</string>
+    <string name="bigger">再大一點</string>
+    <string name="button_guess">我猜！</string>
+</resources>
