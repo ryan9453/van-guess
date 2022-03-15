@@ -3,9 +3,8 @@ package com.example.guess
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import com.example.guess.databinding.ActivityMainBinding
 
 
@@ -79,13 +78,57 @@ class MainActivity : AppCompatActivity() {
     }
     lateinit var binding: ActivityMainBinding
     val viewModel by viewModels<GuessViewModel>()
+    val fragment = mutableListOf<Fragment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initFragments()
+        binding.buttonNavBar.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.action_guess -> {
+                    supportFragmentManager.beginTransaction().run {
+                        replace(R.id.main_container, fragment[0]).commit()
+                    }
+                    true
+                }
+                R.id.action_bmi -> {
+                    supportFragmentManager.beginTransaction().run {
+                        replace(R.id.main_container, fragment[1]).commit()
+                    }
+                    true
+                }
+                R.id.action_camera -> {true}
+                else -> true
+
+            }
+        }
 
     }
+    private fun initFragments() {
+        fragment.add(0, GuessFragment())
+//        val transaction = supportFragmentManager.beginTransaction()
+//        transaction.add(R.id.main_container, guess1to10Fragment)
+//        transaction.commit()
 
+        fragment.add(1, BmiFragment())
+
+        // kotlin way
+        // 當想對建立的物件做某些事，做完物件就無用時可以用 .run {}
+        supportFragmentManager.beginTransaction().run{
+            add(R.id.main_container, fragment[0])
+//            add(R.id.main_container, fragment[1])
+            commit()
+            Log.d(TAG, "initFragments: $fragment")
+        }
+
+        // 當想對建立的物件做某些事，做完物件還會再用時 .apply {}
+//        val t = supportFragmentManager.beginTransaction().apply{
+//            add(R.id.main_container, guess1to10Fragment)
+//            commit()
+//        }
+
+    }
 }
 

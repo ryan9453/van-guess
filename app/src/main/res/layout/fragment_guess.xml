@@ -48,7 +48,7 @@
         android:id="@+id/num_Scope"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="224dp"
+        android:layout_marginTop="180dp"
         android:text="@string/please_enter_a_number_1_10"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"

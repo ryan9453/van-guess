@@ -7,21 +7,22 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.guess.databinding.FragmentTestBinding
+import com.example.guess.databinding.FragmentGuessBinding
 
-class TestFragment : Fragment() {
-    lateinit var binding : FragmentTestBinding
+
+class GuessFragment : Fragment() {
+    lateinit var binding : FragmentGuessBinding
 
     val viewModel by viewModels<GuessViewModel>()
     companion object {
-        val TAG = TestFragment::class.java.simpleName
+        val TAG = GuessFragment::class.java.simpleName
     }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentTestBinding.inflate(inflater)
+        binding = FragmentGuessBinding.inflate(inflater)
 
 //        val view = inflater.inflate(R.layout.fragment_test, container, false)
         return binding.root
