@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.room.Room
 import com.example.guess.databinding.ActivityMainBinding
+import kotlin.concurrent.thread
 
 
 /*class MainActivity : AppCompatActivity() {
@@ -79,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     val viewModel by viewModels<GuessViewModel>()
     val fragment = mutableListOf<Fragment>()
-
+    lateinit var database : TranDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -99,10 +101,22 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
-                R.id.action_camera -> {true}
+                R.id.action_camera -> {
+                    true
+                }
                 else -> true
-
             }
+        }
+
+        // 建立測試資料
+        val t1 = Transaction(1, "Ryan", "20220315", 300000, 1)
+
+        // insert database
+        database = Room.databaseBuilder(this,
+            TranDatabase::class.java, "trans.db")
+            .build()
+        thread {
+            database.transactionDao().insert(t1)
         }
 
     }
