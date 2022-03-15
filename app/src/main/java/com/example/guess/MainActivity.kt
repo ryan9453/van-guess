@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import com.example.guess.databinding.ActivityMainBinding
 
@@ -77,38 +78,43 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.java.simpleName
     }
     lateinit var binding: ActivityMainBinding
-    val game = NumberGame()
+    val viewModel by viewModels<GuessViewModel>()
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        Log.d("MainActivity", "secret = $secret")
+        viewModel.counter.observe(this) {
+            binding.tvCounter.setText(it.toString())
+        }
+        viewModel.gameState.observe(this) { state ->
+            val message = when(state) {
+                GuessViewModel.GameState.BIGGER -> getString(R.string.bigger)
+                GuessViewModel.GameState.SMALLER -> getString(R.string.smaller)
+                GuessViewModel.GameState.BINGO -> getString(R.string.bingo)
+                GuessViewModel.GameState.INIT -> "START"
+                else -> getString(R.string.sometine_wrong)
+            }
+            // 用 Alt+Enter 可以快速將字串萃取到 Xml檔
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_title))
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.ok)) { d, w ->
+                    if (state == GuessViewModel.GameState.BINGO)
+                        viewModel.reset()
+                }
+                .show()
+        }
     }
+
 
     fun guess(view: View) {
         Log.d(TAG, "guess:")
         val num = binding.edNumber.text.toString().toInt()
-        val state = game.guess(num)
-        val message = when(state) {
-            NumberGame.GameState.BIGGER -> getString(R.string.bigger)
-            NumberGame.GameState.SMALLER -> getString(R.string.smaller)
-            NumberGame.GameState.BINGO -> getString(R.string.bingo)
-            else -> getString(R.string.sometine_wrong)
-        }
-        // 用 Alt+Enter 可以快速將字串萃取到 Xml檔
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.dialog_title))
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.ok)) { d, w ->
-                if (game.end) game.reset()
-                updateUI()
-            }
-            .show()
-        updateUI()
-    }
+        viewModel.guess(num)
 
-    private fun updateUI() {
-        binding.tvCounter.text = game.counter.toString()
     }
 
 }
