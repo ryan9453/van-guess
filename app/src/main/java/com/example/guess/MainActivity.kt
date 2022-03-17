@@ -80,7 +80,8 @@ class MainActivity : AppCompatActivity() {
     }
     lateinit var binding: ActivityMainBinding
     val viewModel by viewModels<GuessViewModel>()
-    val fragment = mutableListOf<Fragment>()
+    val mainFragments = mutableListOf<Fragment>()
+    val chatFragments = mutableListOf<Fragment>()
     lateinit var database : TranDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,13 +92,13 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_guess -> {
                     supportFragmentManager.beginTransaction().run {
-                        replace(R.id.main_container, fragment[0]).commit()
+                        replace(R.id.main_container, mainFragments[0]).commit()
                     }
                     true
                 }
                 R.id.action_bmi -> {
                     supportFragmentManager.beginTransaction().run {
-                        replace(R.id.main_container, fragment[1]).commit()
+                        replace(R.id.main_container, mainFragments[1]).commit()
                     }
                     true
                 }
@@ -121,20 +122,32 @@ class MainActivity : AppCompatActivity() {
 
     }
     private fun initFragments() {
-        fragment.add(0, GuessFragment())
+        chatFragments.add(0, EmptyFragment())
+        chatFragments.add(1, ChatFragment())
+        supportFragmentManager.beginTransaction().run{
+            add(R.id.chat_container, chatFragments[0])
+            commit()
+        }
+
+        mainFragments.add(0, GuessFragment())
 //        val transaction = supportFragmentManager.beginTransaction()
 //        transaction.add(R.id.main_container, guess1to10Fragment)
 //        transaction.commit()
 
-        fragment.add(1, BmiFragment())
+        val bundle = Bundle().apply {
+            putString("NAME", "HANK")
+        }
+        mainFragments[0].arguments = bundle
+        mainFragments.add(1, BmiFragment())
+        mainFragments.add(2,EmptyFragment())
 
         // kotlin way
         // 當想對建立的物件做某些事，做完物件就無用時可以用 .run {}
         supportFragmentManager.beginTransaction().run{
-            add(R.id.main_container, fragment[0])
+            add(R.id.main_container, mainFragments[0])
 //            add(R.id.main_container, fragment[1])
             commit()
-            Log.d(TAG, "initFragments: $fragment")
+            Log.d(TAG, "initFragments: $mainFragments")
         }
 
         // 當想對建立的物件做某些事，做完物件還會再用時 .apply {}
@@ -142,6 +155,9 @@ class MainActivity : AppCompatActivity() {
 //            add(R.id.main_container, guess1to10Fragment)
 //            commit()
 //        }
+
+    }
+    fun changeFragment(num: Int) {
 
     }
 }

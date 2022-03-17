@@ -1,19 +1,21 @@
 package com.example.guess
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.guess.databinding.FragmentGuessBinding
 
 
 class GuessFragment : Fragment() {
-    lateinit var binding : FragmentGuessBinding
-
     val viewModel by viewModels<GuessViewModel>()
+
+    lateinit var binding : FragmentGuessBinding
     companion object {
         val TAG = GuessFragment::class.java.simpleName
     }
@@ -33,9 +35,26 @@ class GuessFragment : Fragment() {
         // super....通常是呼叫初始值
         super.onViewCreated(view, savedInstanceState)
 
+        val name = arguments?.getString("NAME")
+        Log.d(TAG, "name: $name")
+
+        binding.enterRoom.setOnClickListener {
+            // change fragment
+            val parentActivity = requireActivity() as MainActivity
+            parentActivity.supportFragmentManager.beginTransaction().run {
+                replace(R.id.main_container, parentActivity.mainFragments[2]).commit()
+            }
+            parentActivity.supportFragmentManager.beginTransaction().run {
+                replace(R.id.chat_container, parentActivity.chatFragments[1]).commit()
+            }
+//            findNavController().navigate(R.id.action_guess_to_chat)
+            parentActivity.binding.buttonNavBar.visibility = View.GONE
+        }
+
         binding.bGuess.setOnClickListener {
             val num = binding.edNumber.text.toString().toInt()
             viewModel.guess(num)
+//            (requireActivity() as MainActivity).changeFragment(1)
         }
         viewModel.counter.observe(viewLifecycleOwner) {
             binding.tvCounter.setText(it.toString())
@@ -59,4 +78,6 @@ class GuessFragment : Fragment() {
                 .show()
         }
     }
+
+
 }
