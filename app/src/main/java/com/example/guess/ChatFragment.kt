@@ -34,6 +34,7 @@ class ChatFragment : Fragment() {
             parentActivity.supportFragmentManager.beginTransaction().run {
                 replace(R.id.chat_container, parentActivity.chatFragments[0]).commit()
             }
+            parentActivity.binding.buttonNavBar.visibility = View.VISIBLE
 //            findNavController().navigate(R.id.action_chat_to_guess)
         }
 
